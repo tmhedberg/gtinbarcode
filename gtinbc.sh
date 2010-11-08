@@ -12,9 +12,9 @@ for line in $(cat $1); do
 
 	barcode -E -e 128 -t 1x1 -b $GTIN -n -u in -g 3x1 |
 	convert -density 600 eps:- png:- |
-	convert -gravity north -extent 1808x750 - - |
+	convert -gravity north -extent 1808x700 - - |
 	convert -gravity south -weight Bold -pointsize 72 -annotate 0 "$GTIN" - - |
-	convert -gravity east -splice 300x0 - - |
+	convert -gravity southeast -splice 300x50 - - |
 	convert -gravity east -extent 4200x750 - - |
 	convert -gravity west -weight Bold -pointsize 96 -annotate 0 "$PACK_CONFIG" - - |
 	convert -gravity east -extent 5100x750 - generated_$GTIN.png
