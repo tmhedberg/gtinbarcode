@@ -24,8 +24,9 @@ done
 echo 'Composing pages...'
 montage -tile 1x8 -geometry 5100x750 generated_*.png mont.png
 
-echo 'Vectorizing...'
+echo 'Adding margins & vectorizing...'
 for mont in $(ls mont*.png); do
+	mogrify -bordercolor white -border 0x300 $mont
 	convert -density 600 $mont $(basename $mont .png).pdf
 done
 
