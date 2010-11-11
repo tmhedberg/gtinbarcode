@@ -7,8 +7,14 @@ for line in $(cat $1); do
 	
 	GTIN=$(echo $line | cut -d'|' -f1)
 	PACK_CONFIG=$(echo $line | cut -d'|' -f5)
+	SAFE_PACK_CONFIG=$(echo $PACK_CONFIG | sed 's/\///g')
 
-	echo $GTIN - $PACK_CONFIG
+	echo -n $GTIN - $PACK_CONFIG
+	if [[ "$SAFE_PACK_CONFIG" != "$PACK_CONFIG" ]]; then
+		echo " ($SAFE_PACK_CONFIG)"
+	else
+		echo
+	fi
 
 	barcode -E -e 128 -t 1x1 -b $GTIN -n -u in -g 3x1 |
 	convert -density 600 eps:- png:- |
@@ -17,7 +23,7 @@ for line in $(cat $1); do
 	convert -gravity southeast -splice 300x50 - - |
 	convert -gravity east -extent 4200x750 - - |
 	convert -gravity west -weight Bold -pointsize 96 -annotate 0 "$PACK_CONFIG" - - |
-	convert -gravity east -extent 5100x750 - "generated_${PACK_CONFIG}_${GTIN}.png"
+	convert -gravity east -extent 5100x750 - "generated_${SAFE_PACK_CONFIG}_${GTIN}.png"
 
 done
 
