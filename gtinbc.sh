@@ -17,7 +17,7 @@ for line in $(cat $1); do
 	convert -gravity southeast -splice 300x50 - - |
 	convert -gravity east -extent 4200x750 - - |
 	convert -gravity west -weight Bold -pointsize 96 -annotate 0 "$PACK_CONFIG" - - |
-	convert -gravity east -extent 5100x750 - generated_$PACK_CONFIG_$GTIN.png
+	convert -gravity east -extent 5100x750 - "generated_${PACK_CONFIG}_${GTIN}.png"
 
 done
 
