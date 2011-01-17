@@ -1,12 +1,18 @@
 #!/bin/bash
 
+FIELD_SEPARATOR='|'
+GTIN_FIELD='1'
+DESCRIPTION_FIELD='2'
+PACK_CONFIG_FIELD='3'
+
 IFS=$(echo -en '\n\b')
 
 echo 'Generating barcodes...'
 for line in $(cat $1); do
 	
-	GTIN=$(echo $line | cut -d'|' -f1)
-	PACK_CONFIG=$(echo $line | cut -d'|' -f5)
+	GTIN=$(echo $line | cut -d"$FIELD_SEPARATOR" -f"$GTIN_FIELD")
+	DESCRIPTION=$(echo $line | cut -d"$FIELD_SEPARATOR" -f"$DESCRIPTION_FIELD")
+	PACK_CONFIG=$(echo $line | cut -d"$FIELD_SEPARATOR" -f"$PACK_CONFIG_FIELD")
 	SAFE_PACK_CONFIG=$(echo $PACK_CONFIG | sed 's/\///g')
 
 	echo -n $GTIN - $PACK_CONFIG
@@ -18,12 +24,12 @@ for line in $(cat $1); do
 
 	barcode -E -e 128 -t 1x1 -b $GTIN -n -u in -g 3x1 |
 	convert -density 600 eps:- png:- |
-	convert -gravity north -extent 1808x700 - - |
-	convert -gravity south -weight Bold -pointsize 72 -annotate 0 "$GTIN" - - |
-	convert -gravity southeast -splice 300x50 - - |
-	convert -gravity east -extent 4200x750 - - |
-	convert -gravity west -weight Bold -pointsize 96 -annotate 0 "$PACK_CONFIG" - - |
-	convert -gravity east -extent 5100x750 - "generated_${SAFE_PACK_CONFIG}_${GTIN}.png"
+	convert -gravity North -extent 1808x700 - - |
+	convert -gravity South -weight Bold -pointsize 72 -annotate 0 "$GTIN" - - |
+	convert -gravity SouthEast -splice 300x50 - - |
+	convert -gravity East -extent 4200x750 - - |
+	convert -gravity West -weight Bold -pointsize 96 -annotate 0 "$DESCRIPTION, $PACK_CONFIG" - - |
+	convert -gravity East -extent 5100x750 - "generated_${SAFE_PACK_CONFIG}_${GTIN}.png"
 
 done
 
